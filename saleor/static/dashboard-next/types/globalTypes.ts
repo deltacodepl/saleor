@@ -333,6 +333,20 @@ export enum TaxRateType {
   WATER = "WATER",
 }
 
+export interface AddressInput {
+  firstName?: string | null;
+  lastName?: string | null;
+  companyName?: string | null;
+  streetAddress1?: string | null;
+  streetAddress2?: string | null;
+  city?: string | null;
+  cityArea?: string | null;
+  postalCode?: string | null;
+  country?: string | null;
+  countryArea?: string | null;
+  phone?: string | null;
+}
+
 export interface AttributeValueInput {
   slug: string;
   value: string;
@@ -348,6 +362,12 @@ export interface FulfillmentCreateInput {
 export interface FulfillmentLineInput {
   orderLineId?: string | null;
   quantity?: number | null;
+}
+
+export interface OrderUpdateInput {
+  billingAddress?: AddressInput | null;
+  userEmail?: string | null;
+  shippingAddress?: AddressInput | null;
 }
 
 export interface ProductTypeInput {

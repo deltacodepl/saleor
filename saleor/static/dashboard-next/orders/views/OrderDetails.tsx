@@ -24,6 +24,7 @@ import {
   TypedOrderDetailsQuery,
   TypedOrderShippingMethodsQuery
 } from "../queries";
+import { OrderUpdate } from "../types/OrderUpdate";
 
 interface OrderDetailsProps {
   id: string;
@@ -73,7 +74,9 @@ export const OrderDetails: React.StatelessComponent<OrderDetailsProps> = ({
                                       data: OrderRefundMutation
                                     ) => {
                                       if (
-                                        !maybe(() => data.orderRefund.errors.length)
+                                        !maybe(
+                                          () => data.orderRefund.errors.length
+                                        )
                                       ) {
                                         pushMessage({
                                           text: i18n.t(
@@ -100,6 +103,22 @@ export const OrderDetails: React.StatelessComponent<OrderDetailsProps> = ({
                                         });
                                       }
                                     };
+                                    const handleUpdate = (
+                                      data: OrderUpdate
+                                    ) => {
+                                      if (
+                                        !maybe(
+                                          () => data.orderUpdate.errors.length
+                                        )
+                                      ) {
+                                        pushMessage({
+                                          text: i18n.t(
+                                            "Order succesfully updated",
+                                            { context: "notification" }
+                                          )
+                                        });
+                                      }
+                                    };
                                     return (
                                       <OrderOperations
                                         order={id}
@@ -109,13 +128,17 @@ export const OrderDetails: React.StatelessComponent<OrderDetailsProps> = ({
                                         }
                                         onPaymentCapture={handlePaymentCapture}
                                         onPaymentRefund={handlePaymentRefund}
+                                        onUpdate={handleUpdate}
                                       >
                                         {({
                                           orderCreateFulfillment,
                                           orderPaymentCapture,
-                                          orderPaymentRefund
+                                          orderPaymentRefund,
+                                          orderUpdate,
+                                          errors
                                         }) => (
                                           <OrderDetailsPage
+                                            errors={errors}
                                             fetchVariants={search}
                                             variants={maybe(() =>
                                               searchOpts.data.products.edges
@@ -146,6 +169,13 @@ export const OrderDetails: React.StatelessComponent<OrderDetailsProps> = ({
                                               navigate(orderListUrl)
                                             }
                                             order={order}
+                                            countries={maybe(
+                                              () => data.shop.countries,
+                                              []
+                                            ).map(country => ({
+                                              code: country.code,
+                                              label: country.country
+                                            }))}
                                             shippingMethods={maybe(() =>
                                               ([] as Array<{
                                                 id: string;
@@ -202,6 +232,22 @@ export const OrderDetails: React.StatelessComponent<OrderDetailsProps> = ({
                                             onProductAdd={() => undefined}
                                             onProductClick={id => () =>
                                               navigate(productUrl(id))}
+                                            onBillingAddressEdit={variables =>
+                                              orderUpdate.mutate({
+                                                id,
+                                                input: {
+                                                  billingAddress: variables
+                                                }
+                                              })
+                                            }
+                                            onShippingAddressEdit={variables =>
+                                              orderUpdate.mutate({
+                                                id,
+                                                input: {
+                                                  shippingAddress: variables
+                                                }
+                                              })
+                                            }
                                           />
                                         )}
                                       </OrderOperations>

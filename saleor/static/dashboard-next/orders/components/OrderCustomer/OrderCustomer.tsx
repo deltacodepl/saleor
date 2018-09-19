@@ -31,7 +31,7 @@ interface OrderCustomerProps {
   };
   shippingAddress?: AddressType;
   billingAddress?: AddressType;
-  editCustomer?: boolean;
+  canEditCustomer?: boolean;
   onCustomerEditClick?();
   onCustomerEmailClick?(id: string);
   onBillingAddressEdit?();
@@ -60,7 +60,7 @@ const OrderCustomer = decorate<OrderCustomerProps>(
     classes,
     client,
     billingAddress,
-    editCustomer,
+    canEditCustomer,
     shippingAddress,
     onCustomerEditClick,
     onCustomerEmailClick,
@@ -71,7 +71,7 @@ const OrderCustomer = decorate<OrderCustomerProps>(
       <CardTitle
         title={i18n.t("Customer")}
         toolbar={
-          !!editCustomer && (
+          !!canEditCustomer && (
             <Button
               color="secondary"
               variant="flat"
@@ -112,23 +112,21 @@ const OrderCustomer = decorate<OrderCustomerProps>(
       <CardTitle
         title={i18n.t("Shipping Address")}
         toolbar={
-          !!editCustomer && (
-            <Button
-              color="secondary"
-              variant="flat"
-              onClick={onShippingAddressEdit}
-              disabled={!onShippingAddressEdit && client === undefined}
-            >
-              {i18n.t("Edit")}
-            </Button>
-          )
+          <Button
+            color="secondary"
+            variant="flat"
+            onClick={onShippingAddressEdit}
+            disabled={!onShippingAddressEdit && client === undefined}
+          >
+            {i18n.t("Edit")}
+          </Button>
         }
       />
       <CardContent>
-        {!shippingAddress ? (
-          <>
-            <Skeleton />
-          </>
+        {shippingAddress === undefined ? (
+          <Skeleton />
+        ) : shippingAddress === null ? (
+          <Typography>{i18n.t("Not set")}</Typography>
         ) : (
           <>
             {shippingAddress.companyName && (
@@ -159,23 +157,21 @@ const OrderCustomer = decorate<OrderCustomerProps>(
       <CardTitle
         title={i18n.t("Billing Address")}
         toolbar={
-          !!editCustomer && (
-            <Button
-              color="secondary"
-              variant="flat"
-              onClick={onBillingAddressEdit}
-              disabled={!onBillingAddressEdit && client === undefined}
-            >
-              {i18n.t("Edit")}
-            </Button>
-          )
+          <Button
+            color="secondary"
+            variant="flat"
+            onClick={onBillingAddressEdit}
+            disabled={!onBillingAddressEdit && client === undefined}
+          >
+            {i18n.t("Edit")}
+          </Button>
         }
       />
       <CardContent>
-        {!billingAddress ? (
-          <>
-            <Skeleton />
-          </>
+        {billingAddress === undefined ? (
+          <Skeleton />
+        ) : billingAddress === null ? (
+          <Typography>{i18n.t("Not set")}</Typography>
         ) : shippingAddress.id === billingAddress.id ? (
           <Typography>{i18n.t("Same as shipping address")}</Typography>
         ) : (
